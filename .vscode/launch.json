@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:swift-yyjson-benchmark}",
+            "name": "Debug swift-yyjson-benchmark",
+            "program": "${workspaceFolder:swift-yyjson-benchmark}/.build/debug/swift-yyjson-benchmark",
+            "preLaunchTask": "swift: Build Debug swift-yyjson-benchmark"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:swift-yyjson-benchmark}",
+            "name": "Release swift-yyjson-benchmark",
+            "program": "${workspaceFolder:swift-yyjson-benchmark}/.build/release/swift-yyjson-benchmark",
+            "preLaunchTask": "swift: Build Release swift-yyjson-benchmark"
+        }
+    ]
+}
