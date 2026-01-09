@@ -22,6 +22,7 @@ This downloads standard JSON benchmark files from
 - `twitter.json` (~632KB) - Twitter API response with nested objects and CJK text
 - `citm_catalog.json` (~1.7MB) - Large catalog with many string keys
 - `canada.json` (~2.2MB) - GeoJSON with many floating-point coordinates
+- `tokenizer.json` (~11MB) - HuggingFace tokenizer ([mlx-community/Qwen3-0.6B-Base-DQ5](https://huggingface.co/mlx-community/Qwen3-0.6B-Base-DQ5)) with large vocab and merges arrays
 
 ## Running Benchmarks
 
