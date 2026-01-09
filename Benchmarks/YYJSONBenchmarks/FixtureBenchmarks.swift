@@ -19,6 +19,7 @@ private func loadFixture(_ name: String) -> Data? {
 private let twitterJSON: Data? = loadFixture("twitter.json")
 private let citmCatalogJSON: Data? = loadFixture("citm_catalog.json")
 private let canadaJSON: Data? = loadFixture("canada.json")
+private let tokenizerJSON: Data? = loadFixture("tokenizer.json")
 
 // MARK: - Fixture Benchmarks
 
@@ -234,6 +235,100 @@ let fixtureBenchmarks: @Sendable () -> Void = {
                                     }
                                 }
                             }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // MARK: - tokenizer.json (~11MB, HuggingFace tokenizer with large vocab and merges arrays)
+
+    if let data = tokenizerJSON {
+        Benchmark("Fixture/tokenizer.json/Parse/YYJSON") { benchmark in
+            for _ in benchmark.scaledIterations {
+                Benchmark.blackHole(try! YYJSONValue(data: data))
+            }
+        }
+
+        Benchmark(
+            "Fixture/tokenizer.json/Parse/YYJSON+in-place",
+            configuration: .init(warmupIterations: 0, scalingFactor: .kilo)
+        ) { benchmark in
+            for _ in benchmark.scaledIterations {
+                var copy = Data(data)
+                benchmark.startMeasurement()
+                Benchmark.blackHole(try! YYJSONValue.parseInPlace(consuming: &copy))
+            }
+        }
+
+        Benchmark("Fixture/tokenizer.json/Parse/Foundation") { benchmark in
+            for _ in benchmark.scaledIterations {
+                Benchmark.blackHole(try! JSONSerialization.jsonObject(with: data))
+            }
+        }
+
+        // Access benchmark - traverse vocab and merges
+        Benchmark(
+            "Fixture/tokenizer.json/Access/YYJSON",
+            configuration: .init(warmupIterations: 1)
+        ) { benchmark in
+            let value = try! YYJSONValue(data: data)
+            for _ in benchmark.scaledIterations {
+                Benchmark.blackHole(value["version"]?.string)
+                if let addedTokens = value["added_tokens"]?.array {
+                    for token in addedTokens {
+                        Benchmark.blackHole(token["id"]?.number)
+                        Benchmark.blackHole(token["content"]?.string)
+                    }
+                }
+                if let model = value["model"] {
+                    Benchmark.blackHole(model["type"]?.string)
+                    if let vocab = model["vocab"]?.object {
+                        var count = 0
+                        for (key, val) in vocab {
+                            Benchmark.blackHole(key)
+                            Benchmark.blackHole(val.number)
+                            count += 1
+                            if count >= 1000 { break }
+                        }
+                    }
+                    if let merges = model["merges"]?.array {
+                        for i in 0..<min(1000, merges.count) {
+                            Benchmark.blackHole(merges[i]?.string)
+                        }
+                    }
+                }
+            }
+        }
+
+        Benchmark(
+            "Fixture/tokenizer.json/Access/Foundation",
+            configuration: .init(warmupIterations: 1)
+        ) { benchmark in
+            let value = try! JSONSerialization.jsonObject(with: data) as! [String: Any]
+            for _ in benchmark.scaledIterations {
+                Benchmark.blackHole(value["version"] as? String)
+                if let addedTokens = value["added_tokens"] as? [[String: Any]] {
+                    for token in addedTokens {
+                        Benchmark.blackHole(token["id"] as? Int)
+                        Benchmark.blackHole(token["content"] as? String)
+                    }
+                }
+                if let model = value["model"] as? [String: Any] {
+                    Benchmark.blackHole(model["type"] as? String)
+                    if let vocab = model["vocab"] as? [String: Int] {
+                        var count = 0
+                        for (key, val) in vocab {
+                            Benchmark.blackHole(key)
+                            Benchmark.blackHole(val)
+                            count += 1
+                            if count >= 1000 { break }
+                        }
+                    }
+                    if let merges = model["merges"] as? [String] {
+                        for i in 0..<min(1000, merges.count) {
+                            Benchmark.blackHole(merges[i])
                         }
                     }
                 }

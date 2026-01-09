@@ -6,7 +6,7 @@ all: fixtures
 
 # Download JSON test fixtures from nativejson-benchmark
 # These are popular fixtures used in JSON parser benchmarks
-fixtures: $(FIXTURES_DIR)/twitter.json $(FIXTURES_DIR)/citm_catalog.json $(FIXTURES_DIR)/canada.json
+fixtures: $(FIXTURES_DIR)/twitter.json $(FIXTURES_DIR)/citm_catalog.json $(FIXTURES_DIR)/canada.json $(FIXTURES_DIR)/tokenizer.json
 
 $(FIXTURES_DIR)/twitter.json:
 	@mkdir -p $(FIXTURES_DIR)
@@ -19,6 +19,10 @@ $(FIXTURES_DIR)/citm_catalog.json:
 $(FIXTURES_DIR)/canada.json:
 	@mkdir -p $(FIXTURES_DIR)
 	curl -sL "https://raw.githubusercontent.com/miloyip/nativejson-benchmark/master/data/canada.json" -o "$@"
+
+$(FIXTURES_DIR)/tokenizer.json:
+	@mkdir -p $(FIXTURES_DIR)
+	curl -sL "https://huggingface.co/mlx-community/Qwen3-0.6B-Base-DQ5/resolve/main/tokenizer.json" -o "$@"
 
 clean:
 	rm -rf $(FIXTURES_DIR)

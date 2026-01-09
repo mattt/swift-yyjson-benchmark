@@ -17,6 +17,24 @@
             "name": "Release swift-yyjson-benchmark",
             "program": "${workspaceFolder:swift-yyjson-benchmark}/.build/release/swift-yyjson-benchmark",
             "preLaunchTask": "swift: Build Release swift-yyjson-benchmark"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:swift-yyjson-benchmark}",
+            "name": "Debug YYJSONBenchmarks",
+            "program": "${workspaceFolder:swift-yyjson-benchmark}/.build/debug/YYJSONBenchmarks",
+            "preLaunchTask": "swift: Build Debug YYJSONBenchmarks"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:swift-yyjson-benchmark}",
+            "name": "Release YYJSONBenchmarks",
+            "program": "${workspaceFolder:swift-yyjson-benchmark}/.build/release/YYJSONBenchmarks",
+            "preLaunchTask": "swift: Build Release YYJSONBenchmarks"
         }
     ]
 }
