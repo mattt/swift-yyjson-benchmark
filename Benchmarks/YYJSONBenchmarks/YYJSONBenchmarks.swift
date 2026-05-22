@@ -143,6 +143,10 @@ let benchmarks: @Sendable () -> Void = {
     // Include fixture benchmarks (for real-world JSON files)
     fixtureBenchmarks()
 
+    // Number-heavy Codable decode benchmarks (isolates the cost of
+    // YYJSON_READ_NUMBER_AS_RAW vs native numeric extraction)
+    numberDecodingBenchmarks()
+
     // MARK: - Encoder Benchmarks (YYJSONEncoder vs JSONEncoder)
 
     Benchmark("Encoder/Simple/YYJSON") { benchmark in
