@@ -1,4 +1,5 @@
 import Benchmark
+import BenchmarkFixtures
 import Foundation
 import YYJSON
 
@@ -51,28 +52,7 @@ private func loadFixture(_ name: String) -> Data? {
     return try? Data(contentsOf: url)
 }
 
-// Concatenate every coordinate pair in canada.json into one flat
-// [[Double, Double]] array, then re-emit as JSON. Roughly 100k pairs
-// (200k Doubles) — large enough to dominate, small enough to sample.
-private let canadaCoordsJSON: Data? = {
-    guard let data = loadFixture("canada.json"),
-        let obj = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-        let features = obj["features"] as? [[String: Any]]
-    else { return nil }
-    var pairs: [[Double]] = []
-    pairs.reserveCapacity(120_000)
-    for f in features {
-        guard let geo = f["geometry"] as? [String: Any],
-            let coords = geo["coordinates"] as? [[[Double]]]
-        else { continue }
-        for ring in coords {
-            for p in ring where p.count == 2 {
-                pairs.append(p)
-            }
-        }
-    }
-    return try? JSONSerialization.data(withJSONObject: pairs)
-}()
+private let canadaCoordsJSON = loadFixture("canada.json").flatMap(canadaCoordinatePairs(from:))
 
 // MARK: - Number Decoding Benchmarks
 
