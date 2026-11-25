@@ -12,9 +12,11 @@ let package = Package(
         .package(path: "../swift-yyjson"),
     ],
     targets: [
+        .target(name: "BenchmarkFixtures"),
         .executableTarget(
             name: "YYJSONBenchmarks",
             dependencies: [
+                "BenchmarkFixtures",
                 .product(name: "Benchmark", package: "package-benchmark"),
                 .product(name: "YYJSON", package: "swift-yyjson"),
             ],
@@ -22,6 +24,7 @@ let package = Package(
             plugins: [
                 .plugin(name: "BenchmarkPlugin", package: "package-benchmark")
             ]
-        )
+        ),
+        .testTarget(name: "BenchmarkFixturesTests", dependencies: ["BenchmarkFixtures"]),
     ]
 )
